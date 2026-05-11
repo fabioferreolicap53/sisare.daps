@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Upload, FileText, AlertCircle, BarChart3, Users, History } from 'lucide-react';
+import { Upload, FileText, AlertCircle, BarChart3, Users, History, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -26,6 +26,7 @@ export default function App() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [history, setHistory] = useState<UploadHistory[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'history'>('upload');
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('sisare_history');
@@ -104,6 +105,13 @@ export default function App() {
     setData(item.data);
     setFileName(item.fileName);
     setActiveTab('upload');
+  };
+
+  const deleteHistoryItem = (id: string) => {
+    const updatedHistory = history.filter(item => item.id !== id);
+    setHistory(updatedHistory);
+    localStorage.setItem('sisare_history', JSON.stringify(updatedHistory));
+    setItemToDelete(null);
   };
 
   return (
@@ -318,14 +326,24 @@ export default function App() {
                             </span>
                           </TableCell>
                           <TableCell className="py-2 px-4 text-right">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => viewHistoryItem(item)}
-                              className="h-8 text-[10px] font-bold uppercase tracking-tighter"
-                            >
-                              Ver Detalhes
-                            </Button>
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => viewHistoryItem(item)}
+                                className="h-8 text-[10px] font-bold uppercase tracking-tighter"
+                              >
+                                Ver Detalhes
+                              </Button>
+                              <Button 
+                                 variant="ghost" 
+                                 size="icon" 
+                                 onClick={() => setItemToDelete(item.id)}
+                                 className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -348,6 +366,39 @@ export default function App() {
         )}
 
       </main>
+
+      {/* Modal de Confirmação Moderno */}
+      {itemToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="w-full max-w-md shadow-2xl border-none animate-in zoom-in-95 duration-200">
+            <CardHeader className="text-center pt-8">
+              <div className="mx-auto w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <CardTitle className="text-xl font-bold text-slate-800">Confirmar Exclusão</CardTitle>
+              <CardDescription className="text-slate-500 mt-2">
+                Tem certeza que deseja remover este registro? Esta ação é permanente e não poderá ser desfeita.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex gap-3 pt-2 pb-8 px-8">
+              <Button 
+                variant="outline" 
+                className="flex-1 h-11 font-bold uppercase text-xs tracking-wider"
+                onClick={() => setItemToDelete(null)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="flex-1 h-11 font-bold uppercase text-xs tracking-wider bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                onClick={() => deleteHistoryItem(itemToDelete)}
+              >
+                Excluir Agora
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
