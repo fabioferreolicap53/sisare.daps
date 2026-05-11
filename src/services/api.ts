@@ -36,7 +36,7 @@ export async function fetchCollection<T>(
   // Implementação mockada inicial. 
   // Na versão final, substitua por: return await pb.collection(collection).getList(page, perPage, { filter, sort });
   
-  console.log(`[PocketBase Mock] Fetching ${collection} - Page: ${page}, Limit: ${perPage}, Filter: ${filter}`);
+  console.log(`[PocketBase Mock] Fetching ${collection} - Page: ${page}, Limit: ${perPage}, Filter: ${filter}, Sort: ${sort}`);
   
   return {
     items: [],

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import Papa from 'papaparse';
-import { Upload, FileText, AlertCircle, BarChart3, Users, Clock } from 'lucide-react';
+import { Upload, FileText, AlertCircle, BarChart3, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
